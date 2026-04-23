@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: radial-gradient(circle at top, #0f0f0f 0%, #020202 55%, #000000 100%);
+  color: #e5e5e5;
+  font-family: "Segoe UI", "Inter", sans-serif;
+}
+
+.неон-рамка {
+  border: 2px solid #00ff66;
+  box-shadow: 0 0 16px rgba(0, 255, 102, 0.45);
+}
