@@ -11,8 +11,13 @@ ReactDOM.createRoot(document.getElementById("root")).render(
 
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
-    navigator.serviceWorker.register("/service-worker.js").catch((error) => {
-      console.error("Ошибка регистрации service worker:", error);
-    });
+    navigator.serviceWorker
+      .register("/service-worker.js")
+      .then((registration) => {
+        registration.update();
+      })
+      .catch((error) => {
+        console.error("Ошибка регистрации service worker:", error);
+      });
   });
 }
