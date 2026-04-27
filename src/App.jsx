@@ -124,11 +124,12 @@ function HowItWorks() {
 function VirtualAnalyzer() {
   const [выбранноеТопливо, setВыбранноеТопливо] = useState(null);
   const [таймер, setТаймер] = useState(0);
+  const [идетСканирование, setИдетСканирование] = useState(false);
 
   const линзы = [
-    { id: "бензин", подпись: "Бензин", позиция: "left-[18%] top-[14%]" },
-    { id: "дизель", подпись: "Дизель", позиция: "right-[18%] top-[14%]" },
-    { id: "газ", подпись: "Газ", позиция: "left-1/2 top-[54%] -translate-x-1/2" }
+    { id: "бензин", подпись: "Бензин" },
+    { id: "дизель", подпись: "Дизель" },
+    { id: "газ", подпись: "Газ" }
   ];
 
   useEffect(() => {
@@ -147,66 +148,174 @@ function VirtualAnalyzer() {
     return () => clearInterval(интервал);
   }, [таймер]);
 
+  useEffect(() => {
+    if (таймер === 0) {
+      setИдетСканирование(false);
+    }
+  }, [таймер]);
+
+  const воспроизвестиЗвукСканирования = () => {
+    try {
+      const Контекст = window.AudioContext || window.webkitAudioContext;
+      if (!Контекст) return;
+
+      const контекст = new Контекст();
+      const сейчас = контекст.currentTime;
+
+      const щелчок = контекст.createOscillator();
+      const усилительЩелчка = контекст.createGain();
+      щелчок.type = "square";
+      щелчок.frequency.setValueAtTime(1400, сейчас);
+      усилительЩелчка.gain.setValueAtTime(0.0001, сейчас);
+      усилительЩелчка.gain.exponentialRampToValueAtTime(0.28, сейчас + 0.01);
+      усилительЩелчка.gain.exponentialRampToValueAtTime(0.0001, сейчас + 0.08);
+      щелчок.connect(усилительЩелчка);
+      усилительЩелчка.connect(контекст.destination);
+      щелчок.start(сейчас);
+      щелчок.stop(сейчас + 0.09);
+
+      const гул = контекст.createOscillator();
+      const усилительГула = контекст.createGain();
+      гул.type = "sawtooth";
+      гул.frequency.setValueAtTime(58, сейчас + 0.1);
+      усилительГула.gain.setValueAtTime(0.0001, сейчас + 0.1);
+      усилительГула.gain.linearRampToValueAtTime(0.08, сейчас + 0.35);
+      усилительГула.gain.linearRampToValueAtTime(0.0001, сейчас + 2.2);
+      гул.connect(усилительГула);
+      усилительГула.connect(контекст.destination);
+      гул.start(сейчас + 0.1);
+      гул.stop(сейчас + 2.3);
+    } catch {
+      // Заглушка звука: если браузер блокирует автозапуск, интерфейс продолжит сканирование без аудио.
+    }
+  };
+
   const запуститьСканирование = () => {
-    if (!выбранноеТопливо) return;
+    if (!выбранноеТопливо || идетСканирование) return;
+    setИдетСканирование(true);
     setТаймер(10);
+    воспроизвестиЗвукСканирования();
   };
 
   return (
     <div>
       <h2 className="text-2xl font-semibold text-slate-50">Виртуальный анализатор</h2>
       <div className="mt-4 rounded-3xl border border-white/15 bg-slate-950/70 p-4 shadow-[0_0_45px_rgba(14,165,233,0.12)]">
-        <div className="relative mx-auto h-[20rem] w-full max-w-3xl rounded-3xl border border-white/10 bg-gradient-to-b from-slate-900/80 to-slate-950/90">
-          {линзы.map((линза) => {
-            const активна = выбранноеТопливо === линза.id;
-            const естьВыбор = Boolean(выбранноеТопливо);
-
-            return (
-              <button
-                key={линза.id}
-                type="button"
-                onClick={() => setВыбранноеТопливо(линза.id)}
-                className={`absolute ${линза.позиция} h-28 w-28 rounded-full border-4 border-slate-300/90 bg-slate-900/85 transition-all duration-300 sm:h-36 sm:w-36 ${
-                  активна
-                    ? "scale-110 shadow-[0_0_36px_rgba(34,211,238,0.75)]"
-                    : естьВыбор
-                      ? "scale-90 opacity-45 blur-[1px]"
-                      : "scale-100 opacity-100"
-                }`}
-              >
-                <span className="absolute inset-3 rounded-full border border-white/35 bg-gradient-to-br from-cyan-200/20 via-slate-800/80 to-black/90" />
-                <span className="absolute inset-[36%] rounded-full bg-cyan-100/20 blur-md" />
-              </button>
-            );
-          })}
-        </div>
-        <div className="mx-auto mt-3 grid max-w-3xl grid-cols-3 gap-2 text-center text-sm text-slate-300">
-          {линзы.map((линза) => (
-            <p
-              key={линза.id}
-              className={`rounded-full border px-2 py-1 ${
-                выбранноеТопливо === линза.id
-                  ? "border-cyan-300/60 bg-cyan-400/10 text-cyan-200"
-                  : "border-white/15 bg-slate-900/35"
-              }`}
-            >
-              {линза.подпись}
-            </p>
-          ))}
+        <div className="relative mx-auto h-[22rem] w-full max-w-3xl overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-b from-slate-900/80 to-slate-950/90 p-4 sm:h-[24rem]">
+          {!идетСканирование ? (
+            <div className="grid h-full grid-rows-[1fr_1fr] gap-8">
+              <div className="flex items-start justify-center pt-2">
+                <LensItem
+                  линза={линзы[0]}
+                  выбрано={выбранноеТопливо}
+                  естьВыбор={Boolean(выбранноеТопливо)}
+                  setВыбранноеТопливо={setВыбранноеТопливо}
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-5 sm:gap-10">
+                <div className="flex items-end justify-center">
+                  <LensItem
+                    линза={линзы[1]}
+                    выбрано={выбранноеТопливо}
+                    естьВыбор={Boolean(выбранноеТопливо)}
+                    setВыбранноеТопливо={setВыбранноеТопливо}
+                  />
+                </div>
+                <div className="flex items-end justify-center">
+                  <LensItem
+                    линза={линзы[2]}
+                    выбрано={выбранноеТопливо}
+                    естьВыбор={Boolean(выбранноеТопливо)}
+                    setВыбранноеТопливо={setВыбранноеТопливо}
+                  />
+                </div>
+              </div>
+            </div>
+          ) : (
+            <SmokeAnimation />
+          )}
         </div>
       </div>
 
       <div className="mt-5 flex flex-col items-center gap-3">
         <button
           type="button"
-          disabled={!выбранноеТопливо}
+          className="w-full max-w-sm rounded-2xl border border-emerald-300/40 bg-emerald-300/10 px-5 py-3 text-sm font-semibold text-emerald-100 transition-all hover:bg-emerald-300/20"
+        >
+          Попробовать бесплатно
+        </button>
+        <p className="-mt-2 text-xs text-slate-400">Без PDF-отчета и сохранения истории</p>
+
+        <button
+          type="button"
+          disabled={!выбранноеТопливо || идетСканирование}
           onClick={запуститьСканирование}
           className="w-full max-w-sm rounded-2xl border border-cyan-300/40 bg-cyan-300/15 px-6 py-3 text-sm font-semibold tracking-[0.2em] text-cyan-100 transition-all hover:bg-cyan-300/25 disabled:cursor-not-allowed disabled:border-white/20 disabled:bg-slate-700/30 disabled:text-slate-500"
         >
           СКАНИРОВАТЬ
         </button>
         <p className="min-h-6 text-sm text-slate-300">
-          {таймер > 0 ? `Идет структурный анализ... ${таймер} с` : "Выберите тип топлива для старта анализа."}
+          {таймер > 0
+            ? `Идет структурный анализ... ${таймер} с`
+            : "Выберите тип топлива и запустите сканирование."}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function LensItem({ линза, выбрано, естьВыбор, setВыбранноеТопливо }) {
+  const активна = выбрано === линза.id;
+  return (
+    <div className="flex flex-col items-center gap-3">
+      <button
+        type="button"
+        onClick={() => setВыбранноеТопливо(линза.id)}
+        className={`relative h-24 w-24 rounded-full border-4 border-slate-300/90 bg-slate-900/85 transition-all duration-300 sm:h-32 sm:w-32 ${
+          активна
+            ? "scale-110 shadow-[0_0_36px_rgba(34,211,238,0.75)]"
+            : естьВыбор
+              ? "scale-90 opacity-45 blur-[1px]"
+              : "scale-100 opacity-100"
+        }`}
+      >
+        <span className="absolute inset-3 rounded-full border border-white/35 bg-gradient-to-br from-cyan-200/20 via-slate-800/80 to-black/90" />
+        <span className="absolute inset-[36%] rounded-full bg-cyan-100/20 blur-md" />
+      </button>
+      <p
+        className={`rounded-full border px-3 py-1 text-xs sm:text-sm ${
+          активна
+            ? "border-cyan-300/60 bg-cyan-400/10 text-cyan-200"
+            : "border-white/15 bg-slate-900/35 text-slate-300"
+        }`}
+      >
+        {линза.подпись}
+      </p>
+    </div>
+  );
+}
+
+function SmokeAnimation() {
+  const облака = Array.from({ length: 8 }, (_, i) => i);
+
+  return (
+    <div className="relative h-full w-full">
+      <div className="absolute inset-0 bg-gradient-to-b from-slate-900/80 to-slate-950/90" />
+      {облака.map((облако) => (
+        <span
+          key={облако}
+          className="absolute bottom-6 rounded-full bg-slate-300/20 blur-xl animate-pulse"
+          style={{
+            left: `${10 + облако * 11}%`,
+            width: `${52 + (облако % 3) * 18}px`,
+            height: `${52 + (облако % 2) * 20}px`,
+            animationDelay: `${облако * 0.2}s`
+          }}
+        />
+      ))}
+      <div className="absolute inset-0 flex items-center justify-center">
+        <p className="rounded-full border border-cyan-300/30 bg-slate-900/55 px-4 py-2 text-sm text-cyan-200">
+          Дымовой паттерн анализируется ИИ...
         </p>
       </div>
     </div>
@@ -216,28 +325,23 @@ function VirtualAnalyzer() {
 function PricingSection() {
   const тарифы = [
     {
-      название: "ТЕСТ",
-      цена: "0 BYN",
-      описание: "Один замер, мгновенный результат на экране без сохранения истории."
-    },
-    {
       название: "РАЗОВЫЙ",
       цена: "10 BYN / 300 RUR",
       описание: "4 фото-замера + отправка детального чек-листа в формате PDF на вашу почту."
     },
     {
-      название: "МЕСЯЧНЫЙ",
+      название: "ОПТИМАЛЬНЫЙ",
       цена: "30 BYN / 900 RUR",
       описание: "До 20 замеров в месяц, полная история в облаке, PDF-отчеты и динамика состояния двигателя.",
       хит: true
     },
     {
-      название: "ГОДОВОЙ",
+      название: "ПРЕМИУМ",
       цена: "150 BYN / 4500 RUR",
       описание: "Безлимитный контроль (до 200 замеров), приоритетная поддержка ИИ-консультанта."
     },
     {
-      название: "КОРПОРАТИВ",
+      название: "БИЗНЕС",
       цена: "1000 BYN / 30000 RUR",
       описание: "Профиль на 10 автомобилей, до 2000 замеров, бизнес-аналитика для автопарка."
     }
@@ -266,6 +370,12 @@ function PricingSection() {
             </div>
             <p className="mt-3 text-lg font-semibold text-white">{тариф.цена}</p>
             <p className="mt-2 text-sm leading-relaxed text-slate-300">{тариф.описание}</p>
+            <button
+              type="button"
+              className="mt-4 w-full rounded-xl border border-cyan-300/40 bg-cyan-300/15 px-4 py-2 text-sm font-semibold text-cyan-100 transition-all hover:bg-cyan-300/25"
+            >
+              Оплатить
+            </button>
           </article>
         ))}
       </div>
@@ -303,7 +413,7 @@ function GasStationRating() {
       <p className="mt-2 text-sm text-slate-300">Нажмите на строку для демонстрационного обновления показателей.</p>
 
       <div className="mt-4 overflow-hidden rounded-2xl border border-white/10 bg-slate-900/40">
-        <div className="grid grid-cols-[1.1fr_0.6fr_1fr] border-b border-white/10 bg-slate-900/65 px-3 py-2 text-xs uppercase tracking-[0.08em] text-slate-300 sm:px-4 sm:text-sm">
+        <div className="grid grid-cols-[1.1fr_0.6fr_1fr] gap-3 border-b border-white/10 bg-slate-900/65 px-3 py-2 text-xs uppercase tracking-[0.08em] text-slate-300 sm:px-4 sm:text-sm">
           <span>Сеть АЗС</span>
           <span>Чистота (%)</span>
           <span>Вердикт ИИ</span>
@@ -314,7 +424,7 @@ function GasStationRating() {
               key={строка.id}
               type="button"
               onClick={() => переключитьСтроку(строка.id)}
-              className="grid w-full grid-cols-[1.1fr_0.6fr_1fr] px-3 py-3 text-left text-xs text-slate-200 transition-all hover:bg-cyan-300/10 sm:px-4 sm:text-sm"
+              className="grid w-full grid-cols-[1.1fr_0.6fr_1fr] gap-3 px-3 py-3 text-left text-xs text-slate-200 transition-all hover:bg-cyan-300/10 sm:px-4 sm:text-sm"
             >
               <span>{строка.сеть}</span>
               <span>{строка.чистота}</span>
