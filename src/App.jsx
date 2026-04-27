@@ -24,11 +24,11 @@ function App() {
 
           <section className="mt-5 rounded-3xl border border-white/10 bg-white/10 p-4 backdrop-blur-xl transition-all">
             <div className="max-h-40 overflow-y-auto pr-1">
-              <h2 className="text-xl font-semibold leading-tight text-slate-50">
-                Интеллектуальный контроль качества топлива и работы ДВС.
+              <h2 className="text-center text-xl font-semibold leading-tight text-slate-50">
+                Узнайте состояние двигателя и качество топлива за 15 секунд
               </h2>
-              <p className="mt-3 text-sm leading-relaxed text-slate-300">
-                Мгновенный спектральный анализ выхлопных газов с помощью Computer Vision.
+              <p className="mt-3 text-center text-sm leading-relaxed text-slate-300">
+                Мгновенная ИИ-диагностика Computer Vision по структуре и цвету выхлопных газов. Чек-лист PDF
               </p>
             </div>
           </section>
