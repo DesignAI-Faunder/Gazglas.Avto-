@@ -23,6 +23,10 @@ function App() {
           </section>
 
           <section className="mt-5 rounded-3xl border border-white/10 bg-white/10 p-5 backdrop-blur-xl transition-all">
+            <HeroIntro />
+          </section>
+
+          <section className="mt-5 rounded-3xl border border-white/10 bg-white/10 p-5 backdrop-blur-xl transition-all">
             <HowItWorks />
           </section>
 
@@ -61,6 +65,20 @@ function App() {
           <p className="text-xs text-slate-400">© 2026 GazGlaz.AI | Будущее чистого движения</p>
         </footer>
       </div>
+    </div>
+  );
+}
+
+function HeroIntro() {
+  return (
+    <div className="text-center">
+      <h1 className="text-xl font-semibold leading-tight text-slate-50 sm:text-2xl">
+        Узнайте состояние двигателя и качество топлива за 15 секунд
+      </h1>
+      <p className="mx-auto mt-3 max-w-3xl text-sm leading-relaxed text-slate-300">
+        Мгновенная ИИ-диагностика Computer Vision по структуре и цвету выхлопных газов с выводом результата
+        на экран и формированием PDF-отчета.
+      </p>
     </div>
   );
 }
