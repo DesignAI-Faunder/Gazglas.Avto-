@@ -39,7 +39,7 @@ function App() {
           </section>
 
           <section className="mt-5 rounded-3xl border border-white/10 bg-white/10 p-5 backdrop-blur-xl transition-all">
-            <GasStationRating />
+            <AutoHealthCertificate />
           </section>
         </main>
 
@@ -383,54 +383,79 @@ function PricingSection() {
   );
 }
 
-function GasStationRating() {
-  const [строки, setСтроки] = useState([
-    { id: 1, сеть: "Белнефть", чистота: 96, вердикт: "Топливо стабильно чистое" },
-    { id: 2, сеть: "Лукойл", чистота: 88, вердикт: "Рекомендуется контроль присадок" },
-    { id: 3, сеть: "Газпромнефть", чистота: 81, вердикт: "Возможны фракционные отклонения" }
-  ]);
-
-  const переключитьСтроку = (id) => {
-    setСтроки((предыдущие) =>
-      предыдущие.map((строка) =>
-        строка.id === id
-          ? {
-              ...строка,
-              чистота: строка.чистота > 90 ? строка.чистота - 7 : строка.чистота + 8,
-              вердикт:
-                строка.чистота > 90
-                  ? "Данные обновлены: контроль в норме"
-                  : "Данные обновлены: нужен повторный замер"
-            }
-          : строка
-      )
-    );
-  };
+function AutoHealthCertificate() {
+  const [показатьПодсказку, setПоказатьПодсказку] = useState(false);
+  const радиус = 56;
+  const длинаОкружности = 2 * Math.PI * радиус;
+  const прогресс = 0.4;
+  const смещение = длинаОкружности * (1 - прогресс);
 
   return (
     <div>
-      <h2 className="text-2xl font-semibold text-slate-50">Рейтинг АЗС</h2>
-      <p className="mt-2 text-sm text-slate-300">Нажмите на строку для демонстрационного обновления показателей.</p>
+      <h2 className="text-2xl font-semibold text-slate-50">Сертификат здоровья авто</h2>
+      <p className="mt-2 text-sm leading-relaxed text-slate-300">
+        Приобрети тариф &quot;Премиум&quot; и получи блокчейн-сертификат. Добавь +15% к цене своего авто.
+      </p>
 
-      <div className="mt-4 overflow-hidden rounded-2xl border border-white/10 bg-slate-900/40">
-        <div className="grid grid-cols-[1.1fr_0.6fr_1fr] gap-3 border-b border-white/10 bg-slate-900/65 px-3 py-2 text-xs uppercase tracking-[0.08em] text-slate-300 sm:px-4 sm:text-sm">
-          <span>Сеть АЗС</span>
-          <span>Чистота (%)</span>
-          <span>Вердикт ИИ</span>
-        </div>
-        <div className="divide-y divide-white/10">
-          {строки.map((строка) => (
+      <div className="mt-4 rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-lg sm:p-5">
+        <div className="flex flex-col gap-4 sm:gap-5">
+          <div className="rounded-2xl border border-white/10 bg-slate-900/35 p-4">
+            <p className="text-xs uppercase tracking-[0.18em] text-slate-400">Platinum Dashboard</p>
+            <div className="mt-3 flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
+              <div className="relative h-40 w-40">
+                <svg viewBox="0 0 140 140" className="h-full w-full -rotate-90">
+                  <circle cx="70" cy="70" r={радиус} fill="none" stroke="rgba(148,163,184,0.2)" strokeWidth="10" />
+                  <circle
+                    cx="70"
+                    cy="70"
+                    r={радиус}
+                    fill="none"
+                    stroke="rgba(34,211,238,0.95)"
+                    strokeWidth="10"
+                    strokeLinecap="round"
+                    strokeDasharray={длинаОкружности}
+                    strokeDashoffset={смещение}
+                    className="transition-all duration-500"
+                  />
+                </svg>
+                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                  <p className="text-xs text-slate-400">Прогресс</p>
+                  <p className="text-xl font-semibold text-cyan-200">40%</p>
+                </div>
+              </div>
+              <div className="w-full max-w-xs rounded-xl border border-white/10 bg-slate-950/45 p-3 text-sm text-slate-300">
+                <p className="text-slate-200">◯ → 🟡 Gold → 💎 Platinum</p>
+                <p className="mt-2 text-cyan-200">До Gold Health осталось 18 проверок</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-white/10 bg-slate-900/35 p-4">
+            <p className="text-xs uppercase tracking-[0.18em] text-slate-400">Прогноз</p>
+            <p className="mt-2 text-2xl font-semibold text-emerald-300 sm:text-3xl">
+              Бонус к цене продажи авто: +4100 BYN
+            </p>
+          </div>
+
+          <div className="relative rounded-2xl border border-white/10 bg-slate-900/35 p-4">
+            <p className="text-xs uppercase tracking-[0.18em] text-slate-400">Активация</p>
             <button
-              key={строка.id}
               type="button"
-              onClick={() => переключитьСтроку(строка.id)}
-              className="grid w-full grid-cols-[1.1fr_0.6fr_1fr] gap-3 px-3 py-3 text-left text-xs text-slate-200 transition-all hover:bg-cyan-300/10 sm:px-4 sm:text-sm"
+              onClick={() => setПоказатьПодсказку((текущее) => !текущее)}
+              className="mt-3 inline-flex items-center gap-2 rounded-xl border border-cyan-300/40 bg-cyan-300/15 px-4 py-2 text-sm font-semibold text-cyan-100 transition-all hover:bg-cyan-300/25 animate-pulse"
             >
-              <span>{строка.сеть}</span>
-              <span>{строка.чистота}</span>
-              <span>{строка.вердикт}</span>
+              <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8">
+                <path d="M12 3l7 3v6c0 4.5-2.9 7.7-7 9-4.1-1.3-7-4.5-7-9V6l7-3z" />
+                <path d="M9 12l2 2 4-4" />
+              </svg>
+              Активировать Shield
             </button>
-          ))}
+            {показатьПодсказку ? (
+              <div className="mt-3 rounded-xl border border-cyan-200/30 bg-slate-950/85 px-3 py-2 text-sm text-cyan-100">
+                Оплати тариф &quot;Премиум&quot; и активируй фиксацию данных в блокчейне для Platinum-сертификата
+              </div>
+            ) : null}
+          </div>
         </div>
       </div>
     </div>
