@@ -125,6 +125,10 @@ function VirtualAnalyzer() {
   const [выбранноеТопливо, setВыбранноеТопливо] = useState(null);
   const [таймер, setТаймер] = useState(0);
   const [идетСканирование, setИдетСканирование] = useState(false);
+  const [режимСканирования, setРежимСканирования] = useState(null);
+  const [показатьPartialReport, setПоказатьPartialReport] = useState(false);
+  const [показатьПолныйОтчет, setПоказатьПолныйОтчет] = useState(false);
+  const [логКадра, setЛогКадра] = useState([]);
 
   const линзы = [
     { id: "бензин", подпись: "Бензин" },
@@ -151,8 +155,31 @@ function VirtualAnalyzer() {
   useEffect(() => {
     if (таймер === 0) {
       setИдетСканирование(false);
+      if (режимСканирования === "demo") {
+        setПоказатьPartialReport(true);
+      }
+      if (режимСканирования === "full") {
+        setПоказатьПолныйОтчет(true);
+      }
+      setРежимСканирования(null);
     }
-  }, [таймер]);
+  }, [таймер, режимСканирования]);
+
+  useEffect(() => {
+    if (!идетСканирование) return undefined;
+    const обновитьЛог = () => {
+      const кадр = Math.floor(1000 + Math.random() * 8999);
+      const ch = (0.2 + Math.random() * 1.3).toFixed(2);
+      const lambda = (0.8 + Math.random() * 0.25).toFixed(2);
+      const temp = Math.floor(220 + Math.random() * 35);
+      return `FRAME-${кадр} | CH:${ch} | λ:${lambda} | T:${temp}C`;
+    };
+    setЛогКадра(Array.from({ length: 4 }, обновитьЛог));
+    const интервалЛога = setInterval(() => {
+      setЛогКадра((предыдущий) => [обновитьЛог(), ...предыдущий].slice(0, 4));
+    }, 380);
+    return () => clearInterval(интервалЛога);
+  }, [идетСканирование]);
 
   const воспроизвестиЗвукСканирования = () => {
     try {
@@ -192,54 +219,153 @@ function VirtualAnalyzer() {
 
   const запуститьСканирование = () => {
     if (!выбранноеТопливо || идетСканирование) return;
+    setПоказатьPartialReport(false);
     setИдетСканирование(true);
+    setРежимСканирования("full");
     setТаймер(10);
     воспроизвестиЗвукСканирования();
   };
+
+  const запуститьDemoСканирование = () => {
+    if (идетСканирование) return;
+    setПоказатьПолныйОтчет(false);
+    setПоказатьPartialReport(false);
+    setИдетСканирование(true);
+    setРежимСканирования("demo");
+    setТаймер(5);
+    воспроизвестиЗвукСканирования();
+  };
+
+  const отчетПараметров = [
+    {
+      название: "1. Дисперсность капель топлива",
+      описание:
+        "Отклонение от нормы на 22% (Стандарт Bosch 2.0). Вероятный износ сопла форсунки."
+    },
+    {
+      название: "2. Коэффициент избытка воздуха (Lambda)",
+      описание: "Показатель 0.85 — богатая смесь. Несоответствие СТБ 1641-2006 (п. 5.2)."
+    },
+    {
+      название: "3. Наличие фракций несгоревших углеводородов (CH)",
+      описание: "Превышение нормы в 1.5 раза. Требуется проверка опережения зажигания."
+    },
+    {
+      название: "4. Дымность/Дисперсность сажи (для Дизеля/Газа)",
+      описание: "Выход за пределы ГОСТ 33997-2016. Риск закоксовки EGR."
+    },
+    {
+      название: "5. Стабильность факела распыла",
+      описание: "Асимметрия факела в 4-м цилиндре. Рекомендована стендовая проверка ТНВД."
+    }
+  ];
 
   return (
     <div>
       <h2 className="text-2xl font-semibold text-slate-50">Виртуальный анализатор</h2>
       <div className="mt-4 rounded-3xl border border-white/15 bg-slate-950/70 p-4 shadow-[0_0_45px_rgba(14,165,233,0.12)]">
-        <div className="relative mx-auto h-[22rem] w-full max-w-3xl overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-b from-slate-900/80 to-slate-950/90 p-4 sm:h-[24rem]">
-          {!идетСканирование ? (
-            <div className="grid h-full grid-rows-[1fr_1fr] gap-8">
-              <div className="flex items-start justify-center pt-2">
+        <div
+          className={`relative mx-auto h-[22rem] w-full max-w-3xl overflow-hidden rounded-3xl border bg-gradient-to-b from-slate-900/80 to-slate-950/90 p-4 sm:h-[24rem] ${
+            режимСканирования === "full" && идетСканирование
+              ? "border-cyan-300/45 animate-pulse"
+              : "border-white/20"
+          }`}
+        >
+          <div className="grid h-full grid-rows-[1fr_1fr] gap-8">
+            <div className="flex items-start justify-center pt-2">
+              <LensItem
+                линза={линзы[0]}
+                выбрано={выбранноеТопливо}
+                естьВыбор={Boolean(выбранноеТопливо)}
+                setВыбранноеТопливо={setВыбранноеТопливо}
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-5 sm:gap-10">
+              <div className="flex items-end justify-center">
                 <LensItem
-                  линза={линзы[0]}
+                  линза={линзы[1]}
                   выбрано={выбранноеТопливо}
                   естьВыбор={Boolean(выбранноеТопливо)}
                   setВыбранноеТопливо={setВыбранноеТопливо}
                 />
               </div>
-              <div className="grid grid-cols-2 gap-5 sm:gap-10">
-                <div className="flex items-end justify-center">
-                  <LensItem
-                    линза={линзы[1]}
-                    выбрано={выбранноеТопливо}
-                    естьВыбор={Boolean(выбранноеТопливо)}
-                    setВыбранноеТопливо={setВыбранноеТопливо}
-                  />
-                </div>
-                <div className="flex items-end justify-center">
-                  <LensItem
-                    линза={линзы[2]}
-                    выбрано={выбранноеТопливо}
-                    естьВыбор={Boolean(выбранноеТопливо)}
-                    setВыбранноеТопливо={setВыбранноеТопливо}
-                  />
+              <div className="flex items-end justify-center">
+                <LensItem
+                  линза={линзы[2]}
+                  выбрано={выбранноеТопливо}
+                  естьВыбор={Boolean(выбранноеТопливо)}
+                  setВыбранноеТопливо={setВыбранноеТопливо}
+                />
+              </div>
+            </div>
+          </div>
+
+          {идетСканирование ? (
+            <div className="absolute inset-0">
+              <div className="absolute inset-0 bg-gradient-to-b from-slate-900/45 to-slate-950/70 backdrop-blur-md" />
+              {Array.from({ length: 10 }, (_, i) => (
+                <span
+                  key={i}
+                  className="absolute rounded-full bg-slate-200/15 blur-xl animate-pulse"
+                  style={{
+                    left: `${5 + i * 9}%`,
+                    bottom: `${8 + (i % 3) * 10}%`,
+                    width: `${56 + (i % 4) * 14}px`,
+                    height: `${40 + (i % 5) * 9}px`,
+                    animationDelay: `${i * 0.16}s`
+                  }}
+                />
+              ))}
+              <div className="absolute inset-y-0 left-0 w-[2px] bg-gradient-to-b from-cyan-200/0 via-cyan-300 to-cyan-200/0 shadow-[0_0_26px_rgba(34,211,238,0.9)] animate-pulse" />
+              <div className="absolute left-3 top-3 h-8 w-8 border-l-2 border-t-2 border-cyan-300/80" />
+              <div className="absolute right-3 top-3 h-8 w-8 border-r-2 border-t-2 border-cyan-300/80" />
+              <div className="absolute bottom-3 left-3 h-8 w-8 border-b-2 border-l-2 border-cyan-300/80" />
+              <div className="absolute bottom-3 right-3 h-8 w-8 border-b-2 border-r-2 border-cyan-300/80" />
+
+              <div className="absolute right-2 top-2 w-[56%] rounded-xl border border-white/20 bg-slate-950/75 p-2 text-[10px] text-cyan-100 sm:w-72 sm:text-xs">
+                <p className="mb-1 text-slate-300">CV Spectrum Log</p>
+                <div className="space-y-1 font-mono">
+                  {логКадра.map((запись) => (
+                    <p key={запись}>{запись}</p>
+                  ))}
                 </div>
               </div>
             </div>
-          ) : (
-            <SmokeAnimation />
-          )}
+          ) : null}
+
+          {показатьPartialReport ? (
+            <div className="absolute inset-0 flex items-center justify-center bg-slate-950/70 p-3 backdrop-blur-md">
+              <div className="w-full max-w-xl rounded-2xl border border-white/20 bg-slate-950/85 p-4 sm:p-5">
+                <h3 className="text-lg font-semibold text-cyan-200">Partial Report</h3>
+                <div className="mt-3 space-y-2 text-sm text-slate-200">
+                  <p className="rounded-lg border border-emerald-300/30 bg-emerald-300/10 px-3 py-2">
+                    CO2 уровень: Норма
+                  </p>
+                  <p className="rounded-lg border border-cyan-300/30 bg-cyan-300/10 px-3 py-2">
+                    Температура выхлопа: 240°C
+                  </p>
+                  {Array.from({ length: 4 }, (_, i) => (
+                    <p
+                      key={i}
+                      className="flex items-center justify-between rounded-lg border border-white/10 bg-slate-900/65 px-3 py-2 text-slate-300"
+                    >
+                      <span className="blur-[3px]">Параметр скрыт в демо-режиме</span>
+                      <span className="ml-2">🔒</span>
+                    </p>
+                  ))}
+                </div>
+                <p className="mt-3 text-sm text-amber-300">Полный анализ доступен в тарифе Премиум</p>
+              </div>
+            </div>
+          ) : null}
         </div>
       </div>
 
       <div className="mt-5 flex flex-col items-center gap-3">
         <button
           type="button"
+          onClick={запуститьDemoСканирование}
+          disabled={идетСканирование}
           className="w-full max-w-sm rounded-2xl border border-emerald-300/40 bg-emerald-300/10 px-5 py-3 text-sm font-semibold text-emerald-100 transition-all hover:bg-emerald-300/20"
         >
           Попробовать бесплатно
@@ -255,11 +381,49 @@ function VirtualAnalyzer() {
           СКАНИРОВАТЬ
         </button>
         <p className="min-h-6 text-sm text-slate-300">
-          {таймер > 0
-            ? `Идет структурный анализ... ${таймер} с`
-            : "Выберите тип топлива и запустите сканирование."}
+          {таймер > 0 && режимСканирования === "full"
+            ? `Идет глубокий анализ... ${таймер} с`
+            : таймер > 0 && режимСканирования === "demo"
+              ? `Идет demo-анализ... ${таймер} с`
+              : "Выберите тип топлива и запустите сканирование."}
         </p>
       </div>
+
+      {показатьПолныйОтчет ? (
+        <div className="fixed inset-0 z-40 flex items-center justify-center bg-slate-950/85 p-4 backdrop-blur-md">
+          <div className="max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-3xl border border-white/20 bg-slate-950/90 p-5 shadow-2xl sm:p-6">
+            <div className="flex items-start justify-between gap-3">
+              <h3 className="text-xl font-semibold text-cyan-200 sm:text-2xl">AI Diagnostic Report</h3>
+              <button
+                type="button"
+                onClick={() => setПоказатьПолныйОтчет(false)}
+                className="rounded-lg border border-white/20 px-3 py-1 text-sm text-slate-200 transition-all hover:bg-white/10"
+              >
+                Закрыть
+              </button>
+            </div>
+            <p className="mt-3 text-sm leading-relaxed text-slate-200">
+              Вердикт ИИ Computer Vision: Анализ на базе 500k паттернов износа. Непредвзятая оценка системы ДВС.
+            </p>
+            <div className="mt-4 space-y-3">
+              {отчетПараметров.map((пункт) => (
+                <article key={пункт.название} className="rounded-2xl border border-white/20 bg-white/5 p-3 backdrop-blur-md">
+                  <h4 className="text-sm font-semibold text-cyan-100 sm:text-base">{пункт.название}</h4>
+                  <p className="mt-1 text-sm leading-relaxed text-slate-300">{пункт.описание}</p>
+                </article>
+              ))}
+            </div>
+            <div className="mt-4 flex flex-wrap gap-2 text-xs sm:text-sm">
+              <a href="#" className="rounded-full border border-cyan-300/40 bg-cyan-300/10 px-3 py-1 text-cyan-100">
+                Согласно СТБ 1641-2006
+              </a>
+              <a href="#" className="rounded-full border border-cyan-300/40 bg-cyan-300/10 px-3 py-1 text-cyan-100">
+                Стандарт Bosch 2.0
+              </a>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }
