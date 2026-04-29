@@ -5,6 +5,8 @@ const МАКСИМАЛЬНЫЙ_AQI = 120;
 const ДЛИТЕЛЬНОСТЬ_ЦИКЛА = 5000;
 
 function App() {
+  const [модалФутера, setМодалФутера] = useState(null);
+
   return (
     <div className="min-h-screen bg-slate-950 px-4 py-4 text-slate-100">
       <div className="mx-auto flex min-h-[calc(100vh-2rem)] w-full max-w-5xl flex-col">
@@ -43,29 +45,194 @@ function App() {
           </section>
         </main>
 
-        <footer className="mt-5 rounded-3xl border border-white/10 bg-white/10 p-4 backdrop-blur-xl transition-all">
-          <div className="mb-3 flex items-center gap-4 text-sm text-slate-300">
-            <a href="#" className="transition-all hover:text-cyan-300">
-              Политика
-            </a>
-            <a href="#" className="transition-all hover:text-cyan-300">
-              Оферта
-            </a>
+        <footer className="mt-5 flex flex-col items-center gap-2 rounded-3xl border-t border-white/10 bg-white/5 p-4 backdrop-blur-md transition-all">
+          <div className="flex flex-wrap items-center justify-center gap-3 text-[10px] font-medium tracking-wider text-slate-500">
+            <button type="button" onClick={() => setМодалФутера("offer")} className="transition-all hover:text-slate-200">
+              Публичная Оферта
+            </button>
+            <button type="button" onClick={() => setМодалФутера("privacy")} className="transition-all hover:text-slate-200">
+              Политика конфиденциальности
+            </button>
+            <button type="button" onClick={() => setМодалФутера("contacts")} className="transition-all hover:text-slate-200">
+              Контакты
+            </button>
           </div>
-          <div className="mb-3 flex flex-wrap gap-2 text-xs">
-            {["VISA", "Mastercard", "МИР", "Apple Pay", "Google Pay"].map((иконка) => (
-              <span
-                key={иконка}
-                className="rounded-full border border-white/20 bg-slate-900/60 px-3 py-1 text-slate-200"
-              >
-                {иконка}
-              </span>
-            ))}
+
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <PaymentLogoVisa />
+            <PaymentLogoMastercard />
+            <PaymentLogoBelkart />
+            <PaymentLogoMir />
+            <PaymentLogoBePaid />
           </div>
-          <p className="text-xs text-slate-400">© 2026 GazGlaz.AI | Будущее чистого движения</p>
+
+          <p className="text-[9px] uppercase text-slate-600">
+            2026 © GazGlas.AI. Интеллектуальная диагностика. Расчеты в BYN.
+          </p>
         </footer>
+
+        {модалФутера ? (
+          <FooterLegalModal
+            variant={модалФутера}
+            onClose={() => setМодалФутера(null)}
+          />
+        ) : null}
       </div>
     </div>
+  );
+}
+
+function FooterLegalModal({ variant, onClose }) {
+  const заголовок =
+    variant === "offer"
+      ? "Публичная Оферта"
+      : variant === "privacy"
+        ? "Политика конфиденциальности"
+        : "Контакты";
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 p-4 backdrop-blur-sm">
+      <div className="w-full max-w-md rounded-2xl border border-white/15 bg-slate-900/90 p-4 shadow-2xl">
+        <div className="mb-3 flex items-center justify-between gap-3">
+          <h3 className="text-sm font-semibold text-slate-100">{заголовок}</h3>
+          <button type="button" onClick={onClose} className="text-xs text-slate-300 transition-all hover:text-white">
+            Закрыть
+          </button>
+        </div>
+
+        {variant === "offer" ? (
+          <p className="text-sm leading-relaxed text-slate-200">
+            Условия оказания услуг GazGlas.AI для Республики Беларусь. Оплата подтверждает согласие с офертой и порядком
+            обработки данных.
+          </p>
+        ) : null}
+
+        {variant === "privacy" ? (
+          <p className="text-sm leading-relaxed text-slate-200">
+            Политика определяет порядок хранения и обработки данных, включая фото-материалы диагностики и контактные
+            реквизиты клиента.
+          </p>
+        ) : null}
+
+        {variant === "contacts" ? (
+          <div className="space-y-3 text-sm text-slate-200">
+            <a href="mailto:support@gazglas.ai" className="inline-block text-cyan-200 transition-all hover:text-cyan-100">
+              support@gazglas.ai
+            </a>
+            <div className="flex flex-wrap items-center gap-2">
+              <a
+                href="https://t.me/"
+                target="_blank"
+                rel="noreferrer"
+                className="flex h-8 w-8 items-center justify-center rounded-full border border-white/20 bg-white/5 text-white transition-all hover:border-cyan-200/60 hover:text-cyan-200"
+                aria-label="Telegram"
+              >
+                <svg viewBox="0 0 24 24" className="h-4 w-4" fill="currentColor" aria-hidden="true">
+                  <path d="M21.9 3.2 3.5 11.2c-1.4.6-1.4 1.4-.2 1.8l4.7 1.5 1.8 5.6c.2.7.6.9 1.2.5l2.5-2 4.4 3.2c.8.5 1.4.2 1.6-.8l3.2-15.2c.3-1.4-.5-2.1-1.8-1.6z" />
+                </svg>
+              </a>
+              <a
+                href="https://wa.me/"
+                target="_blank"
+                rel="noreferrer"
+                className="flex h-8 w-8 items-center justify-center rounded-full border border-white/20 bg-white/5 text-white transition-all hover:border-cyan-200/60 hover:text-cyan-200"
+                aria-label="WhatsApp"
+              >
+                <svg viewBox="0 0 24 24" className="h-4 w-4" fill="currentColor" aria-hidden="true">
+                  <path d="M20.5 12.2c0 4.5-3.7 8.2-8.2 8.2-1.4 0-2.8-.4-4-1.1l-4.7 1.5 1.5-4.6c-.8-1.3-1.3-2.8-1.3-4.4 0-4.5 3.7-8.2 8.2-8.2 4.6 0 8.5 3.7 8.5 8.6zM12 4.6c-4.2 0-7.6 3.4-7.6 7.6 0 1.5.4 2.9 1.2 4.1l-.8 2.4 2.5-.8c1.2.7 2.6 1.1 4.1 1.1 4.2 0 7.6-3.4 7.6-7.6 0-4.2-3.4-7.7-8-7.7zm4.4 10.2c-.2-.1-1.3-.6-1.5-.7-.2-.1-.4-.1-.6.1-.2.2-.7.7-.9.9-.2.2-.4.2-.7.1-.3-.1-1.3-.5-2.5-1.6-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.2-.7.2-.2.4-.5.6-.7.1-.2.2-.3.2-.5 0-.2-.1-.4-.2-.6-.1-.2-.6-1.5-.8-2-.2-.5-.4-.4-.7-.4h-.6c-.2 0-.6.1-.9.5-.3.4-1.2 1.2-1.2 2.9 0 1.7 1.2 3.4 1.4 3.6.2.2 2.4 3.7 5.8 5.2.8.3 1.4.5 1.9.6.8.3 1.5.2 2.1.2.6-.1 1.9-.8 2.2-1.5.3-.7.3-1.3.2-1.4-.1-.2-.3-.3-.5-.4z" />
+                </svg>
+              </a>
+              <a
+                href="viber://chat"
+                className="flex h-8 w-8 items-center justify-center rounded-full border border-white/20 bg-white/5 text-white transition-all hover:border-cyan-200/60 hover:text-cyan-200"
+                aria-label="Viber"
+              >
+                <svg viewBox="0 0 24 24" className="h-4 w-4" fill="currentColor" aria-hidden="true">
+                  <path d="M15.7 3.3c-3.6-.7-7.4-.5-10.6 1.4C2.8 6 1.7 8.7 2 11.5c.2 2.4 1 4.7 2.4 6.7l-.7 3.6 3.7-.9c2 1.2 4.3 1.9 6.7 2.1 2.8.2 5.5-1 7-3.3 1.9-3.2 2.1-7 0-10.3-1.6-2.8-4.5-4.7-7.7-5.4zm1.3 14.3c-.3.8-1.5 1.5-2.4 1.7-.6.1-1.3 0-2-.3-.9-.4-1.8-.9-2.7-1.5-2.5-1.7-4.4-4.1-5.5-7-.5-1.3-.5-2.5.3-3.5.3-.4.8-.7 1.3-.8.4-.1.9 0 1.3.3l1.3 1c.4.3.6.8.5 1.3-.1.6-.3 1.2-.4 1.8-.1.4 0 .8.3 1.1 1.2 1.7 2.7 3 4.5 3.9.4.2.9.2 1.3-.1.5-.4 1-.9 1.6-1.3.5-.4 1.2-.4 1.8-.1l1.4.8c.4.2.7.7.7 1.2 0 .6-.2 1.2-.4 1.7z" />
+                </svg>
+              </a>
+            </div>
+          </div>
+        ) : null}
+      </div>
+    </div>
+  );
+}
+
+function PaymentLogoVisa() {
+  return (
+    <svg
+      aria-label="Visa"
+      viewBox="0 0 48 16"
+      className="h-[14px] w-auto grayscale opacity-50 transition-all hover:grayscale-0 hover:opacity-100"
+    >
+      <rect width="48" height="16" rx="3" fill="#1e293b" />
+      <text x="24" y="11" textAnchor="middle" fill="#e2e8f0" fontSize="8" fontFamily="system-ui, Segoe UI, Arial">
+        VISA
+      </text>
+    </svg>
+  );
+}
+
+function PaymentLogoMastercard() {
+  return (
+    <svg
+      aria-label="Mastercard"
+      viewBox="0 0 56 16"
+      className="h-[14px] w-auto grayscale opacity-50 transition-all hover:grayscale-0 hover:opacity-100"
+    >
+      <rect width="56" height="16" rx="3" fill="#1e293b" />
+      <circle cx="22" cy="8" r="5" fill="#ef4444" opacity="0.85" />
+      <circle cx="30" cy="8" r="5" fill="#f59e0b" opacity="0.85" />
+      <text x="44" y="11" textAnchor="middle" fill="#e2e8f0" fontSize="7" fontFamily="system-ui, Segoe UI, Arial">
+        MC
+      </text>
+    </svg>
+  );
+}
+
+function PaymentLogoBelkart() {
+  return (
+    <svg
+      aria-label="БЕЛКАРТ"
+      viewBox="0 0 70 16"
+      className="h-[14px] w-auto grayscale opacity-50 transition-all hover:grayscale-0 hover:opacity-100"
+    >
+      <rect width="70" height="16" rx="3" fill="#1e293b" />
+      <text x="35" y="11" textAnchor="middle" fill="#e2e8f0" fontSize="7" fontFamily="system-ui, Segoe UI, Arial">
+        БЕЛКАРТ
+      </text>
+    </svg>
+  );
+}
+
+function PaymentLogoMir() {
+  return (
+    <svg
+      aria-label="МИР"
+      viewBox="0 0 44 16"
+      className="h-[14px] w-auto grayscale opacity-50 transition-all hover:grayscale-0 hover:opacity-100"
+    >
+      <rect width="44" height="16" rx="3" fill="#1e293b" />
+      <text x="22" y="11" textAnchor="middle" fill="#e2e8f0" fontSize="8" fontFamily="system-ui, Segoe UI, Arial">
+        МИР
+      </text>
+    </svg>
+  );
+}
+
+function PaymentLogoBePaid() {
+  return (
+    <svg
+      aria-label="bePaid"
+      viewBox="0 0 70 16"
+      className="h-[14px] w-auto grayscale opacity-50 transition-all hover:grayscale-0 hover:opacity-100"
+    >
+      <rect width="70" height="16" rx="3" fill="#1e293b" />
+      <text x="35" y="11" textAnchor="middle" fill="#e2e8f0" fontSize="7" fontFamily="system-ui, Segoe UI, Arial">
+        bePaid
+      </text>
+    </svg>
   );
 }
 
