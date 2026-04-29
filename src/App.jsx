@@ -238,25 +238,40 @@ function VirtualAnalyzer() {
 
   const отчетПараметров = [
     {
-      название: "1. Дисперсность капель топлива",
-      описание:
-        "Отклонение от нормы на 22% (Стандарт Bosch 2.0). Вероятный износ сопла форсунки."
+      параметр: "Ритмичность потока",
+      результат: "Обнаружена прерывистость",
+      эталон: "Норма: стабильная струя",
+      рекомендация: "Диагностика ГРМ и клапанов"
     },
     {
-      название: "2. Коэффициент избытка воздуха (Lambda)",
-      описание: "Показатель 0.85 — богатая смесь. Несоответствие СТБ 1641-2006 (п. 5.2)."
+      параметр: "Дисперсность капель топлива",
+      результат: "Отклонение от нормы на 22%",
+      эталон: "Стандарт Bosch 2.0",
+      рекомендация: "Проверка износа сопла форсунки"
     },
     {
-      название: "3. Наличие фракций несгоревших углеводородов (CH)",
-      описание: "Превышение нормы в 1.5 раза. Требуется проверка опережения зажигания."
+      параметр: "Коэффициент избытка воздуха (Lambda)",
+      результат: "Показатель 0.85 (богатая смесь)",
+      эталон: "СТБ 1641-2006, п. 5.2",
+      рекомендация: "Калибровка подачи воздуха и топлива"
     },
     {
-      название: "4. Дымность/Дисперсность сажи (для Дизеля/Газа)",
-      описание: "Выход за пределы ГОСТ 33997-2016. Риск закоксовки EGR."
+      параметр: "Фракции несгоревших углеводородов (CH)",
+      результат: "Превышение нормы в 1.5 раза",
+      эталон: "СТБ 1641-2006",
+      рекомендация: "Проверка опережения зажигания"
     },
     {
-      название: "5. Стабильность факела распыла",
-      описание: "Асимметрия факела в 4-м цилиндре. Рекомендована стендовая проверка ТНВД."
+      параметр: "Дымность/дисперсность сажи",
+      результат: "Выход за пределы ГОСТ",
+      эталон: "ГОСТ 33997-2016",
+      рекомендация: "Профилактика EGR и очистка тракта"
+    },
+    {
+      параметр: "Стабильность факела распыла",
+      результат: "Асимметрия в 4-м цилиндре",
+      эталон: "Bosch Injector Pattern",
+      рекомендация: "Стендовая проверка ТНВД"
     }
   ];
 
@@ -400,9 +415,63 @@ function VirtualAnalyzer() {
 
       {показатьПолныйОтчет ? (
         <div className="fixed inset-0 z-40 flex items-center justify-center bg-slate-950/85 p-4 backdrop-blur-md">
-          <div className="max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-3xl border border-white/20 bg-slate-950/90 p-5 shadow-2xl sm:p-6">
-            <div className="flex items-start justify-between gap-3">
-              <h3 className="text-xl font-semibold text-cyan-200 sm:text-2xl">AI Diagnostic Report</h3>
+          <div className="max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-3xl border border-white/20 bg-slate-950/55 p-3 shadow-2xl backdrop-blur-xl sm:p-4">
+            <div className="rounded-2xl bg-[#FCFCFC] p-4 text-[#1F2937] sm:p-6">
+              <div className="flex items-start justify-between gap-3 border-b border-slate-200 pb-4">
+                <div className="flex items-center gap-3">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-300 bg-white shadow-sm">
+                    <svg viewBox="0 0 24 24" className="h-5 w-5 text-sky-600" fill="none" stroke="currentColor" strokeWidth="1.8">
+                      <circle cx="12" cy="12" r="9" />
+                      <path d="M7 14l3-3 2 2 4-5" />
+                    </svg>
+                  </span>
+                  <div>
+                    <h3 className="text-xl font-semibold text-[#1F2937] sm:text-2xl">GazGlas.AI</h3>
+                    <p className="text-sm text-slate-500">Expert Diagnostic Sheet</p>
+                  </div>
+                </div>
+                <div className="text-right text-xs text-slate-500 sm:text-sm">
+                  <p className="font-medium text-slate-600">TX: 0xA19C-7F42-9BDE</p>
+                  <p>{new Date().toLocaleDateString("ru-RU")}</p>
+                </div>
+              </div>
+
+              <p className="mt-4 text-sm leading-relaxed text-slate-700 sm:text-base">
+                Вердикт GazGlas Computer Vision: анализ выполнен на базе паттернов износа ДВС с опорой на отраслевые эталоны.
+              </p>
+
+              <div className="mt-4 overflow-x-auto rounded-xl border border-slate-200">
+                <table className="min-w-[780px] w-full border-collapse text-sm sm:text-[14px]">
+                  <thead className="bg-slate-100">
+                    <tr>
+                      <th className="px-3 py-3 text-left font-semibold text-[#1F2937]">Параметр</th>
+                      <th className="px-3 py-3 text-left font-semibold text-[#1F2937]">Результат</th>
+                      <th className="px-3 py-3 text-left font-semibold text-[#1F2937]">Эталон (СТБ/Bosch)</th>
+                      <th className="px-3 py-3 text-left font-semibold text-[#1F2937]">Рекомендация</th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white">
+                    {отчетПараметров.map((пункт) => (
+                      <tr key={пункт.параметр} className="border-t border-slate-200 align-top">
+                        <td className="px-3 py-3 font-medium text-[#1F2937]">{пункт.параметр}</td>
+                        <td className="px-3 py-3 text-black">{пункт.результат}</td>
+                        <td className="px-3 py-3 text-black">{пункт.эталон}</td>
+                        <td className="px-3 py-3 text-black">{пункт.рекомендация}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              <p className="mt-4 text-sm text-slate-700 sm:text-base">
+                Заключение сформировано алгоритмом GazGlas Computer Vision. Непредвзятая оценка
+              </p>
+
+              <div className="mt-5 flex items-start justify-end gap-3">
+                <span className="text-xs text-slate-500 sm:text-sm">Лист 1 / 1</span>
+              </div>
+            </div>
+            <div className="mt-3 flex items-start justify-end gap-3 px-1">
               <button
                 type="button"
                 onClick={() => setПоказатьПолныйОтчет(false)}
@@ -410,25 +479,6 @@ function VirtualAnalyzer() {
               >
                 Закрыть
               </button>
-            </div>
-            <p className="mt-3 text-sm leading-relaxed text-slate-200">
-              Вердикт ИИ Computer Vision: Анализ на базе 500k паттернов износа. Непредвзятая оценка системы ДВС.
-            </p>
-            <div className="mt-4 space-y-3">
-              {отчетПараметров.map((пункт) => (
-                <article key={пункт.название} className="rounded-2xl border border-white/20 bg-white/5 p-3 backdrop-blur-md">
-                  <h4 className="text-sm font-semibold text-cyan-100 sm:text-base">{пункт.название}</h4>
-                  <p className="mt-1 text-sm leading-relaxed text-slate-300">{пункт.описание}</p>
-                </article>
-              ))}
-            </div>
-            <div className="mt-4 flex flex-wrap gap-2 text-xs sm:text-sm">
-              <a href="#" className="rounded-full border border-cyan-300/40 bg-cyan-300/10 px-3 py-1 text-cyan-100">
-                Согласно СТБ 1641-2006
-              </a>
-              <a href="#" className="rounded-full border border-cyan-300/40 bg-cyan-300/10 px-3 py-1 text-cyan-100">
-                Стандарт Bosch 2.0
-              </a>
             </div>
           </div>
         </div>
