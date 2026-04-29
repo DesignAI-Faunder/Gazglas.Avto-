@@ -355,6 +355,15 @@ function VirtualAnalyzer() {
                   ))}
                 </div>
                 <p className="mt-3 text-sm text-amber-300">Полный анализ доступен во всех платных тарифах</p>
+                <div className="mt-3 flex justify-end">
+                  <button
+                    type="button"
+                    onClick={() => setПоказатьPartialReport(false)}
+                    className="text-sm text-slate-300 underline decoration-white/40 underline-offset-4 transition-all hover:text-cyan-200 hover:decoration-cyan-200"
+                  >
+                    Закрыть
+                  </button>
+                </div>
               </div>
             </div>
           ) : null}
@@ -394,6 +403,13 @@ function VirtualAnalyzer() {
           <div className="max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-3xl border border-white/20 bg-slate-950/90 p-5 shadow-2xl sm:p-6">
             <div className="flex items-start justify-between gap-3">
               <h3 className="text-xl font-semibold text-cyan-200 sm:text-2xl">AI Diagnostic Report</h3>
+              <button
+                type="button"
+                onClick={() => setПоказатьПолныйОтчет(false)}
+                className="rounded-lg border border-white/20 px-3 py-1 text-sm text-slate-200 transition-all hover:bg-white/10"
+              >
+                Закрыть
+              </button>
             </div>
             <p className="mt-3 text-sm leading-relaxed text-slate-200">
               Вердикт ИИ Computer Vision: Анализ на базе 500k паттернов износа. Непредвзятая оценка системы ДВС.
@@ -413,16 +429,6 @@ function VirtualAnalyzer() {
               <a href="#" className="rounded-full border border-cyan-300/40 bg-cyan-300/10 px-3 py-1 text-cyan-100">
                 Стандарт Bosch 2.0
               </a>
-            </div>
-            <p className="mt-5 text-sm text-amber-300">Полный анализ доступен во всех платных тарифах</p>
-            <div className="mt-3 flex justify-end">
-              <button
-                type="button"
-                onClick={() => setПоказатьПолныйОтчет(false)}
-                className="text-sm text-slate-300 underline decoration-white/40 underline-offset-4 transition-all hover:text-cyan-200 hover:decoration-cyan-200"
-              >
-                Закрыть
-              </button>
             </div>
           </div>
         </div>
