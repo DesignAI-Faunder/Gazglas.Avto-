@@ -281,7 +281,7 @@ function VirtualAnalyzer() {
               />
             </div>
             <div className="grid grid-cols-2 gap-5 sm:gap-10">
-              <div className="flex items-end justify-center">
+              <div className="flex items-end justify-center lg:-translate-y-3">
                 <LensItem
                   линза={линзы[1]}
                   выбрано={выбранноеТопливо}
@@ -289,7 +289,7 @@ function VirtualAnalyzer() {
                   setВыбранноеТопливо={setВыбранноеТопливо}
                 />
               </div>
-              <div className="flex items-end justify-center">
+              <div className="flex items-end justify-center lg:-translate-y-3">
                 <LensItem
                   линза={линзы[2]}
                   выбрано={выбранноеТопливо}
@@ -335,7 +335,7 @@ function VirtualAnalyzer() {
 
           {показатьPartialReport ? (
             <div className="absolute inset-0 flex items-center justify-center bg-slate-950/70 p-3 backdrop-blur-md">
-              <div className="w-full max-w-xl rounded-2xl border border-white/20 bg-slate-950/85 p-4 sm:p-5">
+              <div className="max-h-[85%] w-full max-w-xl overflow-y-auto rounded-2xl border border-white/20 bg-slate-950/85 p-4 sm:p-5">
                 <h3 className="text-lg font-semibold text-cyan-200">Partial Report</h3>
                 <div className="mt-3 space-y-2 text-sm text-slate-200">
                   <p className="rounded-lg border border-emerald-300/30 bg-emerald-300/10 px-3 py-2">
@@ -354,7 +354,7 @@ function VirtualAnalyzer() {
                     </p>
                   ))}
                 </div>
-                <p className="mt-3 text-sm text-amber-300">Полный анализ доступен в тарифе Премиум</p>
+                <p className="mt-3 text-sm text-amber-300">Полный анализ доступен во всех платных тарифах</p>
               </div>
             </div>
           ) : null}
@@ -394,13 +394,6 @@ function VirtualAnalyzer() {
           <div className="max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-3xl border border-white/20 bg-slate-950/90 p-5 shadow-2xl sm:p-6">
             <div className="flex items-start justify-between gap-3">
               <h3 className="text-xl font-semibold text-cyan-200 sm:text-2xl">AI Diagnostic Report</h3>
-              <button
-                type="button"
-                onClick={() => setПоказатьПолныйОтчет(false)}
-                className="rounded-lg border border-white/20 px-3 py-1 text-sm text-slate-200 transition-all hover:bg-white/10"
-              >
-                Закрыть
-              </button>
             </div>
             <p className="mt-3 text-sm leading-relaxed text-slate-200">
               Вердикт ИИ Computer Vision: Анализ на базе 500k паттернов износа. Непредвзятая оценка системы ДВС.
@@ -420,6 +413,16 @@ function VirtualAnalyzer() {
               <a href="#" className="rounded-full border border-cyan-300/40 bg-cyan-300/10 px-3 py-1 text-cyan-100">
                 Стандарт Bosch 2.0
               </a>
+            </div>
+            <p className="mt-5 text-sm text-amber-300">Полный анализ доступен во всех платных тарифах</p>
+            <div className="mt-3 flex justify-end">
+              <button
+                type="button"
+                onClick={() => setПоказатьПолныйОтчет(false)}
+                className="text-sm text-slate-300 underline decoration-white/40 underline-offset-4 transition-all hover:text-cyan-200 hover:decoration-cyan-200"
+              >
+                Закрыть
+              </button>
             </div>
           </div>
         </div>
