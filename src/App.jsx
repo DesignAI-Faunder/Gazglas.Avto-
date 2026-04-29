@@ -349,37 +349,12 @@ function VirtualAnalyzer() {
           ) : null}
 
           {показатьPartialReport ? (
-            <div className="absolute inset-0 flex items-center justify-center bg-slate-950/70 p-3 backdrop-blur-md">
-              <div className="max-h-[85%] w-full max-w-xl overflow-y-auto rounded-2xl border border-white/20 bg-slate-950/85 p-4 sm:p-5">
-                <h3 className="text-lg font-semibold text-cyan-200">Partial Report</h3>
-                <div className="mt-3 space-y-2 text-sm text-slate-200">
-                  <p className="rounded-lg border border-emerald-300/30 bg-emerald-300/10 px-3 py-2">
-                    CO2 уровень: Норма
-                  </p>
-                  <p className="rounded-lg border border-cyan-300/30 bg-cyan-300/10 px-3 py-2">
-                    Температура выхлопа: 240°C
-                  </p>
-                  {Array.from({ length: 4 }, (_, i) => (
-                    <p
-                      key={i}
-                      className="flex items-center justify-between rounded-lg border border-white/10 bg-slate-900/65 px-3 py-2 text-slate-300"
-                    >
-                      <span className="blur-[3px]">Параметр скрыт в демо-режиме</span>
-                      <span className="ml-2">🔒</span>
-                    </p>
-                  ))}
-                </div>
-                <p className="mt-3 text-sm text-amber-300">Полный анализ доступен во всех платных тарифах</p>
-                <div className="mt-3 flex justify-end">
-                  <button
-                    type="button"
-                    onClick={() => setПоказатьPartialReport(false)}
-                    className="text-sm text-slate-300 underline decoration-white/40 underline-offset-4 transition-all hover:text-cyan-200 hover:decoration-cyan-200"
-                  >
-                    Закрыть
-                  </button>
-                </div>
-              </div>
+            <div className="fixed inset-0 z-40 flex items-center justify-center bg-slate-950/85 p-4 backdrop-blur-md">
+              <ReportSheet
+                параметры={отчетПараметров}
+                тестовыйРежим
+                onClose={() => setПоказатьPartialReport(false)}
+              />
             </div>
           ) : null}
         </div>
@@ -415,72 +390,99 @@ function VirtualAnalyzer() {
 
       {показатьПолныйОтчет ? (
         <div className="fixed inset-0 z-40 flex items-center justify-center bg-slate-950/85 p-4 backdrop-blur-md">
-          <div className="max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-3xl border border-white/20 bg-slate-950/55 p-3 shadow-2xl backdrop-blur-xl sm:p-4">
-            <div className="rounded-2xl bg-[#FCFCFC] p-4 text-[#1F2937] sm:p-6">
-              <div className="flex items-start justify-between gap-3 border-b border-slate-200 pb-4">
-                <div className="flex items-center gap-3">
-                  <span className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-300 bg-white shadow-sm">
-                    <svg viewBox="0 0 24 24" className="h-5 w-5 text-sky-600" fill="none" stroke="currentColor" strokeWidth="1.8">
-                      <circle cx="12" cy="12" r="9" />
-                      <path d="M7 14l3-3 2 2 4-5" />
-                    </svg>
-                  </span>
-                  <div>
-                    <h3 className="text-xl font-semibold text-[#1F2937] sm:text-2xl">GazGlas.AI</h3>
-                    <p className="text-sm text-slate-500">Expert Diagnostic Sheet</p>
-                  </div>
-                </div>
-                <div className="text-right text-xs text-slate-500 sm:text-sm">
-                  <p className="font-medium text-slate-600">TX: 0xA19C-7F42-9BDE</p>
-                  <p>{new Date().toLocaleDateString("ru-RU")}</p>
-                </div>
-              </div>
+          <ReportSheet параметры={отчетПараметров} onClose={() => setПоказатьПолныйОтчет(false)} />
+        </div>
+      ) : null}
+    </div>
+  );
+}
 
-              <p className="mt-4 text-sm leading-relaxed text-slate-700 sm:text-base">
-                Вердикт GazGlas Computer Vision: анализ выполнен на базе паттернов износа ДВС с опорой на отраслевые эталоны.
-              </p>
-
-              <div className="mt-4 overflow-x-auto rounded-xl border border-slate-200">
-                <table className="min-w-[780px] w-full border-collapse text-sm sm:text-[14px]">
-                  <thead className="bg-slate-100">
-                    <tr>
-                      <th className="px-3 py-3 text-left font-semibold text-[#1F2937]">Параметр</th>
-                      <th className="px-3 py-3 text-left font-semibold text-[#1F2937]">Результат</th>
-                      <th className="px-3 py-3 text-left font-semibold text-[#1F2937]">Эталон (СТБ/Bosch)</th>
-                      <th className="px-3 py-3 text-left font-semibold text-[#1F2937]">Рекомендация</th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white">
-                    {отчетПараметров.map((пункт) => (
-                      <tr key={пункт.параметр} className="border-t border-slate-200 align-top">
-                        <td className="px-3 py-3 font-medium text-[#1F2937]">{пункт.параметр}</td>
-                        <td className="px-3 py-3 text-black">{пункт.результат}</td>
-                        <td className="px-3 py-3 text-black">{пункт.эталон}</td>
-                        <td className="px-3 py-3 text-black">{пункт.рекомендация}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-
-              <p className="mt-4 text-sm text-slate-700 sm:text-base">
-                Заключение сформировано алгоритмом GazGlas Computer Vision. Непредвзятая оценка
-              </p>
-
-              <div className="mt-5 flex items-start justify-end gap-3">
-                <span className="text-xs text-slate-500 sm:text-sm">Лист 1 / 1</span>
-              </div>
+function ReportSheet({ параметры, тестовыйРежим = false, onClose }) {
+  return (
+    <div className="max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-3xl border border-white/20 bg-slate-950/55 p-3 shadow-2xl backdrop-blur-xl sm:p-4">
+      <div className="rounded-2xl bg-white p-4 text-[#1A1A1A] sm:p-6">
+        <div className="flex items-start justify-between gap-3 border-b border-slate-200 pb-4">
+          <div className="flex items-center gap-3">
+            <span className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-300 bg-white shadow-sm">
+              <svg viewBox="0 0 24 24" className="h-5 w-5 text-sky-600" fill="none" stroke="currentColor" strokeWidth="1.8">
+                <circle cx="12" cy="12" r="9" />
+                <path d="M7 14l3-3 2 2 4-5" />
+              </svg>
+            </span>
+            <div>
+              <h3 className="text-xl font-semibold text-[#1A1A1A] sm:text-2xl">GazGlas.AI</h3>
+              <p className="text-sm text-slate-500">Expert Diagnostic Sheet</p>
             </div>
-            <div className="mt-3 flex items-start justify-end gap-3 px-1">
+          </div>
+          <div className="text-right text-xs text-slate-500 sm:text-sm">
+            <p className="font-medium text-slate-600">TX: 0xA19C-7F42-9BDE</p>
+            <p>{new Date().toLocaleDateString("ru-RU")}</p>
+          </div>
+        </div>
+
+        <p className="mt-4 text-sm leading-relaxed text-slate-700 sm:text-base">
+          Вердикт GazGlas Computer Vision: анализ выполнен на базе паттернов износа ДВС с опорой на отраслевые эталоны.
+        </p>
+
+        <div className="mt-4 overflow-x-auto rounded-xl border border-slate-200">
+          <table className="w-full min-w-[780px] border-collapse text-[14px]">
+            <thead className="bg-slate-100">
+              <tr>
+                <th className="px-3 py-3 text-left font-semibold text-[#1A1A1A]">Параметр</th>
+                <th className="px-3 py-3 text-left font-semibold text-[#1A1A1A]">Результат</th>
+                <th className="px-3 py-3 text-left font-semibold text-[#1A1A1A]">Эталон (СТБ/Bosch)</th>
+                <th className="px-3 py-3 text-left font-semibold text-[#1A1A1A]">Рекомендация</th>
+              </tr>
+            </thead>
+            <tbody className="bg-white">
+              {параметры.map((пункт, индекс) => {
+                const скрытьДетали = тестовыйРежим && индекс >= 2;
+                return (
+                  <tr key={пункт.параметр} className="border-t border-slate-200 align-top">
+                    <td className="px-3 py-3 font-medium text-[#1A1A1A]">{пункт.параметр}</td>
+                    <td className={`px-3 py-3 text-black ${скрытьДетали ? "blur-[3px] select-none" : ""}`}>{пункт.результат}</td>
+                    <td className="px-3 py-3 text-black">{пункт.эталон}</td>
+                    <td className={`px-3 py-3 text-black ${скрытьДетали ? "blur-[3px] select-none" : ""}`}>{пункт.рекомендация}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+
+        {тестовыйРежим ? (
+          <div className="mt-4">
+            <p className="text-sm text-slate-700 sm:text-base">Полный анализ доступен во всех платных тарифах</p>
+            <div className="mt-3 flex justify-end">
               <button
                 type="button"
-                onClick={() => setПоказатьПолныйОтчет(false)}
-                className="rounded-lg border border-white/20 px-3 py-1 text-sm text-slate-200 transition-all hover:bg-white/10"
+                onClick={onClose}
+                className="rounded-lg border border-slate-300 px-3 py-1 text-sm text-slate-700 transition-all hover:bg-slate-100"
               >
                 Закрыть
               </button>
             </div>
           </div>
+        ) : (
+          <>
+            <p className="mt-4 text-sm text-slate-700 sm:text-base">
+              Заключение сформировано алгоритмом GazGlas Computer Vision. Непредвзятая оценка
+            </p>
+            <div className="mt-5 flex items-start justify-end gap-3">
+              <span className="text-xs text-slate-500 sm:text-sm">Лист 1 / 1</span>
+            </div>
+          </>
+        )}
+      </div>
+      {!тестовыйРежим ? (
+        <div className="mt-3 flex items-start justify-end gap-3 px-1">
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-lg border border-white/20 px-3 py-1 text-sm text-slate-200 transition-all hover:bg-white/10"
+          >
+            Закрыть
+          </button>
         </div>
       ) : null}
     </div>
