@@ -9,7 +9,12 @@ ReactDOM.createRoot(document.getElementById("root")).render(
   </React.StrictMode>
 );
 
-if ("serviceWorker" in navigator) {
+const isLocalhost =
+  window.location.hostname === "localhost" ||
+  window.location.hostname === "127.0.0.1" ||
+  window.location.hostname === "[::1]";
+
+if ("serviceWorker" in navigator && !isLocalhost) {
   window.addEventListener("load", () => {
     navigator.serviceWorker
       .register("/service-worker.js")
