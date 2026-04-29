@@ -562,13 +562,27 @@ function AutoHealthCertificate() {
   const длинаОкружности = 2 * Math.PI * радиус;
   const прогресс = 0.4;
   const смещение = длинаОкружности * (1 - прогресс);
+  const стартовоеСмещение = длинаОкружности;
 
   return (
     <div>
-      <h2 className="text-2xl font-semibold text-slate-50">Сертификат здоровья авто</h2>
+      <h2 className="text-2xl font-semibold text-slate-50">Ликвидность авто</h2>
       <p className="mt-2 text-sm leading-relaxed text-slate-300">
         Приобрети тариф &quot;Премиум&quot; и получи блокчейн-сертификат. Добавь +15% к цене своего авто.
       </p>
+      <style>{`
+        @keyframes liquidityArcCycle {
+          0% { stroke-dashoffset: var(--arc-start); }
+          75% { stroke-dashoffset: var(--arc-end); }
+          88% { stroke-dashoffset: var(--arc-end); }
+          100% { stroke-dashoffset: var(--arc-start); }
+        }
+
+        @keyframes liquidityBonusPulse {
+          0%, 72%, 100% { transform: scale(1); opacity: 1; }
+          80% { transform: scale(1.1); opacity: 0.85; }
+        }
+      `}</style>
 
       <div className="mt-4 rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-lg sm:p-5">
         <div className="flex flex-col gap-4 sm:gap-5">
@@ -577,18 +591,44 @@ function AutoHealthCertificate() {
             <div className="mt-3 flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
               <div className="relative h-40 w-40">
                 <svg viewBox="0 0 140 140" className="h-full w-full -rotate-90">
+                  <defs>
+                    <linearGradient id="liquidityArcGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" stopColor="#cffafe">
+                        <animate
+                          attributeName="stop-color"
+                          values="#cffafe;#38bdf8;#cffafe"
+                          dur="4s"
+                          repeatCount="indefinite"
+                        />
+                      </stop>
+                      <stop offset="100%" stopColor="#1d4ed8">
+                        <animate
+                          attributeName="stop-color"
+                          values="#1d4ed8;#0ea5e9;#1d4ed8"
+                          dur="4s"
+                          repeatCount="indefinite"
+                        />
+                      </stop>
+                    </linearGradient>
+                  </defs>
                   <circle cx="70" cy="70" r={радиус} fill="none" stroke="rgba(148,163,184,0.2)" strokeWidth="10" />
                   <circle
                     cx="70"
                     cy="70"
                     r={радиус}
                     fill="none"
-                    stroke="rgba(34,211,238,0.95)"
+                    stroke="url(#liquidityArcGradient)"
                     strokeWidth="10"
                     strokeLinecap="round"
                     strokeDasharray={длинаОкружности}
-                    strokeDashoffset={смещение}
-                    className="transition-all duration-500"
+                    strokeDashoffset={стартовоеСмещение}
+                    className="will-change-[stroke-dashoffset]"
+                    style={{
+                      "--arc-start": стартовоеСмещение,
+                      "--arc-end": смещение,
+                      animation: "liquidityArcCycle 4s ease-in-out infinite",
+                      filter: "drop-shadow(0 0 8px rgba(56,189,248,0.75)) drop-shadow(0 0 16px rgba(29,78,216,0.45))"
+                    }}
                   />
                 </svg>
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
@@ -605,7 +645,10 @@ function AutoHealthCertificate() {
 
           <div className="rounded-2xl border border-white/10 bg-slate-900/35 p-4">
             <p className="text-xs uppercase tracking-[0.18em] text-slate-400">Прогноз</p>
-            <p className="mt-2 text-2xl font-semibold text-emerald-300 sm:text-3xl">
+            <p
+              className="mt-2 text-2xl font-semibold text-emerald-300 will-change-transform sm:text-3xl"
+              style={{ animation: "liquidityBonusPulse 4s ease-in-out infinite" }}
+            >
               Бонус к цене продажи авто: +4100 BYN
             </p>
           </div>
