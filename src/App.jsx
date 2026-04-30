@@ -46,14 +46,26 @@ function App() {
         </main>
 
         <footer className="mt-5 flex flex-col items-center gap-2 rounded-3xl border-t border-white/10 bg-white/5 p-4 backdrop-blur-md transition-all">
-          <div className="flex flex-wrap items-center justify-center gap-3 text-[10px] font-medium tracking-wider text-slate-500">
-            <button type="button" onClick={() => setМодалФутера("offer")} className="transition-all hover:text-slate-200">
-              Публичная Оферта
+          <div className="flex flex-wrap items-center justify-center gap-3 text-[14px] font-medium tracking-wider text-slate-300">
+            <button
+              type="button"
+              onClick={() => setМодалФутера("offer")}
+              className="whitespace-nowrap px-2 py-1 transition-all hover:text-slate-100"
+            >
+              Оферта
             </button>
-            <button type="button" onClick={() => setМодалФутера("privacy")} className="transition-all hover:text-slate-200">
-              Политика конфиденциальности
+            <button
+              type="button"
+              onClick={() => setМодалФутера("privacy")}
+              className="whitespace-nowrap px-2 py-1 transition-all hover:text-slate-100"
+            >
+              Конфиденциальность
             </button>
-            <button type="button" onClick={() => setМодалФутера("contacts")} className="transition-all hover:text-slate-200">
+            <button
+              type="button"
+              onClick={() => setМодалФутера("contacts")}
+              className="whitespace-nowrap px-2 py-1 transition-all hover:text-slate-100"
+            >
               Контакты
             </button>
           </div>
@@ -66,8 +78,8 @@ function App() {
             <PaymentLogoBePaid />
           </div>
 
-          <p className="text-[9px] uppercase text-slate-600">
-            2026 © GazGlas.AI. Интеллектуальная диагностика. Расчеты в BYN.
+          <p className="text-[12px] text-slate-300">
+            2026 © GazGlas.AI. Интеллектуальная диагностика.
           </p>
         </footer>
 
@@ -164,7 +176,7 @@ function PaymentLogoVisa() {
     <svg
       aria-label="Visa"
       viewBox="0 0 48 16"
-      className="h-[14px] w-auto grayscale opacity-50 transition-all hover:grayscale-0 hover:opacity-100"
+      className="h-8 w-auto transition-all"
     >
       <rect width="48" height="16" rx="3" fill="#1e293b" />
       <text x="24" y="11" textAnchor="middle" fill="#e2e8f0" fontSize="8" fontFamily="system-ui, Segoe UI, Arial">
@@ -179,7 +191,7 @@ function PaymentLogoMastercard() {
     <svg
       aria-label="Mastercard"
       viewBox="0 0 56 16"
-      className="h-[14px] w-auto grayscale opacity-50 transition-all hover:grayscale-0 hover:opacity-100"
+      className="h-8 w-auto transition-all"
     >
       <rect width="56" height="16" rx="3" fill="#1e293b" />
       <circle cx="22" cy="8" r="5" fill="#ef4444" opacity="0.85" />
@@ -196,7 +208,7 @@ function PaymentLogoBelkart() {
     <svg
       aria-label="БЕЛКАРТ"
       viewBox="0 0 70 16"
-      className="h-[14px] w-auto grayscale opacity-50 transition-all hover:grayscale-0 hover:opacity-100"
+      className="h-8 w-auto transition-all"
     >
       <rect width="70" height="16" rx="3" fill="#1e293b" />
       <text x="35" y="11" textAnchor="middle" fill="#e2e8f0" fontSize="7" fontFamily="system-ui, Segoe UI, Arial">
@@ -211,7 +223,7 @@ function PaymentLogoMir() {
     <svg
       aria-label="МИР"
       viewBox="0 0 44 16"
-      className="h-[14px] w-auto grayscale opacity-50 transition-all hover:grayscale-0 hover:opacity-100"
+      className="h-8 w-auto transition-all"
     >
       <rect width="44" height="16" rx="3" fill="#1e293b" />
       <text x="22" y="11" textAnchor="middle" fill="#e2e8f0" fontSize="8" fontFamily="system-ui, Segoe UI, Arial">
@@ -226,7 +238,7 @@ function PaymentLogoBePaid() {
     <svg
       aria-label="bePaid"
       viewBox="0 0 70 16"
-      className="h-[14px] w-auto grayscale opacity-50 transition-all hover:grayscale-0 hover:opacity-100"
+      className="h-8 w-auto transition-all"
     >
       <rect width="70" height="16" rx="3" fill="#1e293b" />
       <text x="35" y="11" textAnchor="middle" fill="#e2e8f0" fontSize="7" fontFamily="system-ui, Segoe UI, Arial">
