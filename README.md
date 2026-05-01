@@ -35,3 +35,16 @@ npm run dev
 ## Безопасность API-ключей
 
 Ключ `OPENAI_API_KEY` должен храниться только в Supabase Edge Functions, а не во frontend-коде.
+
+## Непрерывная поставка (GitHub -> Supabase)
+
+В репозитории настроены GitHub Actions:
+
+- `Deploy Supabase Edge Functions` — деплой edge-функций
+- `Deploy Supabase DB Migrations` — применение SQL-миграций из `supabase/migrations/`
+
+Для миграций БД в GitHub Secrets (репозитория) должен быть секрет:
+
+- `DATABASE_URL` — строка подключения Postgres из Supabase **Settings -> Database -> Connection string** (URI, с паролем)
+
+Важно: **не** кладите `DATABASE_URL` в frontend и **не** коммитьте его в git.
