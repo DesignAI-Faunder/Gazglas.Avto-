@@ -42,13 +42,17 @@ jobs:
           SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
 
       - name: Link Supabase project
-        run: supabase link --project-ref "$SUPABASE_PROJECT_REF" --password "$SUPABASE_DB_PASSWORD"
+        run: |
+          CLEAN_DB_PASSWORD="$(printf %s "$SUPABASE_DB_PASSWORD" | tr -d '\r\n')"
+          supabase link --project-ref "$SUPABASE_PROJECT_REF" --password "$CLEAN_DB_PASSWORD"
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
           SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
 
       - name: Apply database migrations
-        run: supabase db push --include-all
+        run: |
+          CLEAN_DB_PASSWORD="$(printf %s "$SUPABASE_DB_PASSWORD" | tr -d '\r\n')"
+          supabase db push --password "$CLEAN_DB_PASSWORD" --include-all
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
           SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
