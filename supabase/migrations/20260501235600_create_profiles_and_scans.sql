@@ -1,3 +1,4 @@
+-- Initial schema for client profiles and AI scan records.
 create table if not exists public.profiles (
   id uuid primary key references auth.users(id) on delete cascade,
   tariff text not null check (tariff in ('Разовый', 'Оптимальный', 'Премиум', 'Бизнес')),
