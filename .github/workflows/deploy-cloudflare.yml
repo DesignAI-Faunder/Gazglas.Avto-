@@ -32,10 +32,21 @@ jobs:
 
       - name: Deploy to Cloudflare Workers
         shell: bash
+        env:
+          _S_CF_MAIN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          _S_CF_LEGACY: ${{ secrets.CF_API_TOKEN }}
+          _S_CF_ALT: ${{ secrets.CLOUDFLARE_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
           set -eo pipefail
+          export CLOUDFLARE_API_TOKEN="${_S_CF_MAIN}"
+          if [ -z "$CLOUDFLARE_API_TOKEN" ]; then export CLOUDFLARE_API_TOKEN="${_S_CF_LEGACY}"; fi
+          if [ -z "$CLOUDFLARE_API_TOKEN" ]; then export CLOUDFLARE_API_TOKEN="${_S_CF_ALT}"; fi
+          unset _S_CF_MAIN _S_CF_LEGACY _S_CF_ALT
+          if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
+            echo "::error::Для этого репозитория GitHub Actions не видит ни одного секрета с API-токеном Cloudflare. В DesignAI-Faunder/Gazglas.Avto- откройте Settings → Secrets and variables → Actions и создайте repository secret CLOUDFLARE_API_TOKEN (как здесь: https://developers.cloudflare.com/fundamentals/api/get-started/create-token/). Секреты не копируются с других репозиториев."
+            exit 1
+          fi
+          [ -z "${CLOUDFLARE_ACCOUNT_ID:-}" ] && unset CLOUDFLARE_ACCOUNT_ID || true
           npx wrangler --version
           npx wrangler deploy
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
