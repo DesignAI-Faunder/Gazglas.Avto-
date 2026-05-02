@@ -46,25 +46,25 @@ function App() {
         </main>
 
         <footer className="mt-5 flex flex-col items-center gap-2 rounded-3xl border-t border-white/10 bg-white/5 p-4 backdrop-blur-md transition-all">
-          <div className="flex flex-wrap items-center justify-center gap-3 text-[14px] font-medium tracking-wider text-slate-300">
+          <div className="flex flex-nowrap items-center justify-center gap-x-2 text-[12px] font-medium tracking-wide text-slate-100 min-[380px]:gap-x-3 min-[380px]:text-[13px] sm:gap-x-3 sm:text-[15px]">
             <button
               type="button"
               onClick={() => setМодалФутера("offer")}
-              className="whitespace-nowrap px-2 py-1 transition-all hover:text-slate-100"
+              className="shrink-0 whitespace-nowrap rounded-lg px-1.5 py-1 text-slate-100 transition-all hover:text-white hover:drop-shadow-[0_0_10px_rgba(248,250,252,0.75)] sm:px-2"
             >
               Оферта
             </button>
             <button
               type="button"
               onClick={() => setМодалФутера("privacy")}
-              className="whitespace-nowrap px-2 py-1 transition-all hover:text-slate-100"
+              className="shrink-0 whitespace-nowrap rounded-lg px-1.5 py-1 text-slate-100 transition-all hover:text-white hover:drop-shadow-[0_0_10px_rgba(248,250,252,0.75)] sm:px-2"
             >
-              Конфиденциальность
+              Приватность
             </button>
             <button
               type="button"
               onClick={() => setМодалФутера("contacts")}
-              className="whitespace-nowrap px-2 py-1 transition-all hover:text-slate-100"
+              className="shrink-0 whitespace-nowrap rounded-lg px-1.5 py-1 text-slate-100 transition-all hover:text-white hover:drop-shadow-[0_0_10px_rgba(248,250,252,0.75)] sm:px-2"
             >
               Контакты
             </button>
@@ -266,7 +266,7 @@ function HowItWorks() {
   const шаги = [
     {
       заголовок: "Шаг 1: Запуск сканера",
-      текст: "Откройте доступ к камере и направьте объектив на выхлопную трубу прогретого авто."
+      текст: "Направьте камеру смартфона на выхлопную трубу прогретого авто с захватом госномера на расстоянии 50-70 см."
     },
     {
       заголовок: "Шаг 2: Фиксация оборотов",
