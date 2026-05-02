@@ -1,4 +1,4 @@
--- Схема БД (корень репозитория). Для ручного запуска в Supabase удобнее: apply_in_supabase.sql
+-- Вставь весь файл в Supabase: SQL Editor → вставка → Run. Больше ничего не копируй.
 
 CREATE TABLE IF NOT EXISTS public.profiles (
   id uuid PRIMARY KEY,
